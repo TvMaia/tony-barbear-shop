@@ -1,0 +1,808 @@
+---
+const BOOKING_URL = 'https://tony9432.setmore.com/';
+const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angelo's & Luigi's Barbershop | Calgary's Most Trusted Barbers</title>
+  <meta name="description" content="Calgary's most trusted barbershop. 770 five-star reviews. Haircuts, fades, beard trims, hot shaves. Book online." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:       #080807;
+      --bg2:      #111110;
+      --bg3:      #181715;
+      --gold:     #c8a44a;
+      --gold-dim: rgba(200,164,74,0.18);
+      --cream:    #f0e8d8;
+      --muted:    #7a7060;
+      --dim:      #3a3530;
+      --border:   rgba(200,164,74,0.12);
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --serif:    'Cormorant Garamond', Georgia, serif;
+      --sans:     'DM Sans', system-ui, sans-serif;
+      --max:      1120px;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; object-fit: cover; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── GRAIN OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.028;
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 2rem; }
+    .sp { padding: 7rem 0; }
+    .sp-sm { padding: 4rem 0; }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up.d1 { transition-delay: 0.1s; }
+    .fade-up.d2 { transition-delay: 0.2s; }
+    .fade-up.d3 { transition-delay: 0.3s; }
+    .fade-up.d4 { transition-delay: 0.4s; }
+    .fade-up.d5 { transition-delay: 0.5s; }
+
+    /* ── TYPOGRAPHY ── */
+    .display {
+      font-family: var(--display);
+      letter-spacing: 0.03em;
+      line-height: 0.92;
+    }
+    .headline {
+      font-family: var(--serif);
+      font-weight: 600;
+      line-height: 1.15;
+    }
+    .overline {
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+    }
+    .gold { color: var(--gold); }
+    .muted { color: var(--muted); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.9rem 2.25rem;
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      position: relative;
+    }
+    .btn-primary { background: var(--gold); color: #080807; }
+    .btn-primary:hover { background: #dfc06a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,164,74,0.25); }
+    .btn-ghost {
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(240,232,216,0.25);
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 1.5rem 0;
+      background: rgba(8,8,7,0.88);
+      backdrop-filter: blur(12px) saturate(120%);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s ease;
+    }
+    nav.scrolled { padding: 1rem 0; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+    }
+    .nav-logo em { color: var(--gold); font-style: normal; }
+    .nav-right { display: flex; align-items: center; gap: 2.5rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.68rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+    @media (max-width: 640px) { .nav-links { display: none; } }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: flex-end;
+      padding-bottom: 6rem;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1800&auto=format&fit=crop&q=85');
+      background-size: cover; background-position: center 30%;
+      filter: brightness(0.22) saturate(0.6);
+      transform: scale(1.04);
+      transition: transform 8s ease;
+    }
+    .hero-bg.loaded { transform: scale(1); }
+    .hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,8,7,0.96) 0%, rgba(8,8,7,0.4) 50%, rgba(8,8,7,0.15) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 1;
+      padding: 0 2rem;
+      max-width: var(--max);
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .hero-tag-line { width: 2rem; height: 1px; background: var(--gold); }
+    .hero-tag span { font-size: 0.65rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
+    .hero-h1 {
+      font-family: var(--display);
+      font-size: clamp(4.5rem, 13vw, 11rem);
+      letter-spacing: 0.02em;
+      line-height: 0.88;
+      margin-bottom: 2rem;
+    }
+    .hero-h1 .accent {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.65em;
+      color: var(--gold);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 2.5rem;
+      max-width: 440px;
+    }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-scroll-hint {
+      position: absolute; right: 2rem; bottom: 4rem;
+      writing-mode: vertical-rl;
+      font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dim); display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-scroll-hint::after {
+      content: ''; width: 1px; height: 3rem;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+
+    /* ── TRUST BAR ── */
+    .trust {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 0;
+      overflow: hidden;
+    }
+    .trust-track {
+      display: flex; align-items: center; gap: 4rem;
+      white-space: nowrap;
+    }
+    .trust-item { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
+    .trust-num { font-family: var(--display); font-size: 1.6rem; color: var(--gold); letter-spacing: 0.05em; }
+    .trust-lbl { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+    .trust-sep { color: var(--dim); font-size: 1.2rem; flex-shrink: 0; }
+
+    /* ── GALLERY 1 — ASYMMETRIC ── */
+    .gallery-asym {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      grid-template-rows: 240px 240px;
+      gap: 4px;
+    }
+    .gallery-asym .g-main { grid-row: 1 / 3; }
+    .gallery-asym img {
+      height: 100%;
+      filter: brightness(0.75) saturate(0.65);
+      transition: filter 0.4s, transform 0.5s;
+    }
+    .gallery-asym img:hover { filter: brightness(0.95) saturate(0.9); transform: scale(1.02); }
+    @media (max-width: 768px) {
+      .gallery-asym { grid-template-columns: 1fr 1fr; grid-template-rows: 180px 180px; }
+      .gallery-asym .g-main { grid-row: auto; }
+    }
+
+    /* ── PAS ── */
+    .pas { background: var(--bg2); border-top: 1px solid var(--border); }
+    .pas-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 0; }
+    .pas-img-wrap { position: relative; overflow: hidden; }
+    .pas-img-wrap img { height: 100%; min-height: 560px; filter: brightness(0.7) saturate(0.6); }
+    .pas-img-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 70%, var(--bg2) 100%);
+    }
+    .pas-text {
+      padding: 5rem 3.5rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .pas-text .overline { margin-bottom: 1.25rem; }
+    .pas-text h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 1.75rem; }
+    .pas-text p { color: var(--muted); margin-bottom: 1rem; line-height: 1.85; font-size: 0.95rem; }
+    .pas-pull {
+      border-left: 2px solid var(--gold);
+      padding-left: 1.25rem;
+      margin-top: 1.5rem;
+      color: var(--cream);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .pas-grid { grid-template-columns: 1fr; }
+      .pas-img-wrap { display: none; }
+      .pas-text { padding: 4rem 2rem; }
+    }
+
+    /* ── ABOUT ── */
+    .about { position: relative; overflow: hidden; text-align: center; }
+    .about-bg-text {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-family: var(--display);
+      font-size: clamp(80px, 18vw, 200px);
+      color: rgba(200,164,74,0.04);
+      white-space: nowrap; pointer-events: none; letter-spacing: 0.05em;
+      user-select: none;
+    }
+    .about-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .about-inner .overline { margin-bottom: 1.25rem; }
+    .about-inner h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 1.75rem; }
+    .about-inner p { color: var(--muted); line-height: 1.85; margin-bottom: 0.85rem; font-size: 0.95rem; }
+
+    /* ── SERVICES ── */
+    .services { background: var(--bg2); }
+    .services-head { text-align: center; margin-bottom: 5rem; }
+    .services-head h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+    .cat-block {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-bottom: 1px;
+      overflow: hidden;
+    }
+    .cat-block.flip { direction: rtl; }
+    .cat-block.flip > * { direction: ltr; }
+
+    .cat-img-wrap { position: relative; overflow: hidden; }
+    .cat-img-wrap img {
+      height: 500px;
+      filter: brightness(0.72) saturate(0.65);
+      transition: filter 0.5s, transform 0.6s;
+    }
+    .cat-img-wrap:hover img { filter: brightness(0.9) saturate(0.8); transform: scale(1.04); }
+    .cat-chip {
+      position: absolute; top: 1.5rem; left: 1.5rem;
+      background: rgba(8,8,7,0.85);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .cat-text {
+      padding: 4rem 3.5rem;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative;
+    }
+    .cat-watermark {
+      position: absolute;
+      top: 1rem; left: 2rem;
+      font-family: var(--display);
+      font-size: clamp(60px, 10vw, 120px);
+      color: rgba(200,164,74,0.05);
+      pointer-events: none; user-select: none;
+      letter-spacing: 0.05em; line-height: 1;
+    }
+    .cat-text h3 {
+      font-family: var(--display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.25rem;
+    }
+    .cat-text .cat-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+
+    /* PRICE LIST — menu style */
+    .price-list { list-style: none; }
+    .price-row {
+      display: flex; align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(200,164,74,0.07);
+    }
+    .price-row:last-of-type { border-bottom: none; }
+    .price-name { font-size: 0.85rem; font-weight: 400; flex-shrink: 0; }
+    .price-sub { font-size: 0.68rem; color: var(--muted); margin-left: 0.4rem; flex-shrink: 0; }
+    .price-dots {
+      flex: 1;
+      border-bottom: 1px dotted rgba(200,164,74,0.25);
+      margin: 0 0.6rem 0.2rem;
+      min-width: 1rem;
+    }
+    .price-val {
+      font-family: var(--serif); font-size: 1.05rem;
+      color: var(--gold); flex-shrink: 0;
+    }
+    .cat-cta { margin-top: 2rem; }
+
+    @media (max-width: 768px) {
+      .cat-block { grid-template-columns: 1fr; }
+      .cat-block.flip { direction: ltr; }
+      .cat-img-wrap img { height: 260px; }
+      .cat-text { padding: 3rem 2rem; }
+    }
+
+    /* ── GALLERY 2 — THE WORK ── */
+    .work { background: var(--bg3); }
+    .work-head { text-align: center; padding-bottom: 2rem; }
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+    .work-grid img {
+      height: 260px;
+      filter: brightness(0.72) saturate(0.6);
+      transition: filter 0.4s;
+    }
+    .work-grid img:hover { filter: brightness(1) saturate(0.85); }
+    @media (max-width: 768px) {
+      .work-grid { grid-template-columns: repeat(2, 1fr); }
+      .work-grid img { height: 180px; }
+    }
+
+    /* ── REVIEWS ── */
+    .reviews-head { text-align: center; margin-bottom: 3rem; }
+    .reviews-stars { font-size: 1.5rem; color: var(--gold); margin-bottom: 0.75rem; }
+    .reviews-head h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+    .reviews-head p { color: var(--muted); margin-top: 0.5rem; font-size: 0.9rem; }
+
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; }
+    .review-card {
+      background: var(--bg2);
+      padding: 2rem;
+      border-top: 2px solid transparent;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+    .review-card:hover { border-top-color: var(--gold); }
+    .r-stars { font-size: 0.8rem; color: var(--gold); margin-bottom: 1.25rem; }
+    .r-text {
+      font-family: var(--serif); font-style: italic;
+      font-size: 1.05rem; color: var(--cream);
+      line-height: 1.7; margin-bottom: 1.5rem;
+    }
+    .r-meta { font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+    .r-meta em { color: var(--gold); font-style: normal; margin-right: 0.4rem; }
+    @media (max-width: 768px) { .reviews-grid { grid-template-columns: 1fr; } }
+
+    /* ── LOCATION ── */
+    .location { background: var(--bg2); border-top: 1px solid var(--border); }
+    .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+    .loc-h { margin-bottom: 2.5rem; }
+    .loc-h h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); line-height: 1.1; }
+    .loc-address { color: var(--muted); font-size: 0.88rem; line-height: 2; margin-bottom: 2rem; }
+    .loc-address strong { color: var(--cream); display: block; margin-bottom: 0.1rem; }
+    .hours-table { width: 100%; border-collapse: collapse; margin-bottom: 2.5rem; }
+    .hours-table tr { border-bottom: 1px solid rgba(200,164,74,0.07); }
+    .hours-table tr:last-child { border-bottom: none; }
+    .hours-table td { padding: 0.7rem 0; font-size: 0.85rem; }
+    .hours-table td:first-child { color: var(--muted); }
+    .hours-table td:last-child { text-align: right; font-weight: 500; }
+    .loc-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .map-panel {
+      height: 400px; background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem; text-align: center; padding: 2rem;
+      position: relative; overflow: hidden;
+    }
+    .map-panel::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(200,164,74,0.04) 0%, transparent 70%);
+    }
+    .map-pin { font-size: 2.75rem; position: relative; }
+    .map-panel p { color: var(--muted); font-size: 0.85rem; line-height: 1.8; position: relative; }
+    @media (max-width: 768px) { .location-grid { grid-template-columns: 1fr; gap: 3rem; } .map-panel { height: 240px; } }
+
+    /* ── FINAL CTA ── */
+    .final { text-align: center; border-top: 1px solid var(--border); position: relative; overflow: hidden; }
+    .final::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center bottom, rgba(200,164,74,0.06) 0%, transparent 65%);
+    }
+    .final-inner { position: relative; max-width: 600px; margin: 0 auto; }
+    .final-inner h2 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1rem; }
+    .final-inner p { color: var(--muted); margin-bottom: 3rem; font-size: 1rem; }
+    .steps { display: flex; justify-content: center; gap: 3rem; margin-bottom: 3rem; flex-wrap: wrap; }
+    .step-item { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+    .step-num {
+      width: 2.5rem; height: 2.5rem; border-radius: 50%;
+      border: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1rem; color: var(--gold);
+    }
+    .step-lbl { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-logo { font-family: var(--display); font-size: 1rem; letter-spacing: 0.1em; }
+    .footer-logo em { color: var(--gold); font-style: normal; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.65rem; color: var(--dim); }
+    @media (max-width: 600px) { .footer-inner { flex-direction: column; text-align: center; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="container nav-inner">
+      <div class="nav-logo">ANGELO'S <em>&</em> LUIGI'S</div>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#services">Services</a></li>
+          <li><a href="#location">Location</a></li>
+        </ul>
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary" style="padding:0.55rem 1.5rem;">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-tag fade-up">
+        <div class="hero-tag-line"></div>
+        <span>Calgary, Alberta</span>
+      </div>
+      <h1 class="hero-h1 fade-up d1">
+        CALGARY'S<br />
+        <span class="accent">Most Trusted</span><br />
+        BARBERSHOP
+      </h1>
+      <p class="hero-sub fade-up d2">
+        770 five-star reviews. Old-school craft.<br />No bad haircut excuses.
+      </p>
+      <div class="hero-ctas fade-up d3">
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary">Book Your Appointment</a>
+        <a href="#services" class="btn btn-ghost">View Services</a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">Scroll</div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust">
+    <div class="container">
+      <div class="trust-track">
+        <div class="trust-item">
+          <div>
+            <div class="trust-num">5.0 ★</div>
+            <div class="trust-lbl">Google Rating</div>
+          </div>
+        </div>
+        <div class="trust-sep">·</div>
+        <div class="trust-item">
+          <div>
+            <div class="trust-num">770+</div>
+            <div class="trust-lbl">Five-Star Reviews</div>
+          </div>
+        </div>
+        <div class="trust-sep">·</div>
+        <div class="trust-item">
+          <div>
+            <div class="trust-num">Centre NW</div>
+            <div class="trust-lbl">Calgary, Alberta</div>
+          </div>
+        </div>
+        <div class="trust-sep">·</div>
+        <div class="trust-item">
+          <div>
+            <div class="trust-num">Mon–Fri</div>
+            <div class="trust-lbl">9 AM – 7 PM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY 1 — ASYMMETRIC -->
+  <div class="gallery-asym">
+    <div class="g-main">
+      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&h=600&auto=format&fit=crop&q=80" alt="Barber at work" loading="lazy" />
+    </div>
+    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=290&auto=format&fit=crop&q=80" alt="Haircut" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=290&auto=format&fit=crop&q=80" alt="Beard trim" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=290&auto=format&fit=crop&q=80" alt="Hot shave" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1572422977703-61f25b4e09a0?w=600&h=290&auto=format&fit=crop&q=80" alt="Barbershop tools" loading="lazy" />
+  </div>
+
+  <!-- PAS -->
+  <section class="pas">
+    <div class="pas-grid">
+      <div class="pas-img-wrap">
+        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=700&h=700&auto=format&fit=crop&q=80" alt="Precision barber work" loading="lazy" />
+      </div>
+      <div class="pas-text">
+        <span class="overline fade-up">The Problem With Most Barbershops</span>
+        <h2 class="headline fade-up d1">Tired of leaving the chair wondering what just happened?</h2>
+        <p class="fade-up d2">Most people have sat through a haircut they hated — but were too polite to say anything. You walked in with a photo. You walked out with something else entirely. And you're back to square one in six weeks.</p>
+        <p class="fade-up d3">Finding a barber you can actually trust — one who listens, executes, and delivers the same result every single visit — shouldn't be this hard.</p>
+        <p class="pas-pull fade-up d4">That's not how it works here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about sp">
+    <div class="about-bg-text">BARBERSHOP</div>
+    <div class="container">
+      <div class="about-inner">
+        <span class="overline fade-up">Who We Are</span>
+        <h2 class="headline fade-up d1">Just a great cut. Every time.</h2>
+        <p class="fade-up d2">Angelo's and Luigi's has been cutting hair in Calgary the way it should be cut — properly, consistently, and with the kind of easy-going atmosphere that makes you actually look forward to the appointment.</p>
+        <p class="fade-up d3">No gimmicks. No upsells. Just good work and honest prices.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container sp-sm">
+      <div class="services-head fade-up">
+        <span class="overline">What We Offer</span>
+        <h2 class="headline">What We Do — and What It Costs.</h2>
+      </div>
+    </div>
+
+    <!-- HAIRCUTS -->
+    <div class="cat-block">
+      <div class="cat-img-wrap">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=700&h=560&auto=format&fit=crop&q=80" alt="Haircuts Calgary" loading="lazy" />
+        <div class="cat-chip">Haircuts</div>
+      </div>
+      <div class="cat-text">
+        <div class="cat-watermark">CUTS</div>
+        <h3 class="fade-up">Haircuts</h3>
+        <p class="cat-desc fade-up d1">Classic cuts to clean fades — executed with precision, every time.</p>
+        <ul class="price-list fade-up d2">
+          <li class="price-row"><span class="price-name">Haircut</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$40</span></li>
+          <li class="price-row"><span class="price-name">Skin / Zero Fade</span><span class="price-sub">45 min</span><span class="price-dots"></span><span class="price-val">$45</span></li>
+          <li class="price-row"><span class="price-name">Buzz Cut</span><span class="price-sub">20 min</span><span class="price-dots"></span><span class="price-val">$30</span></li>
+          <li class="price-row"><span class="price-name">Long Hair (past shoulder)</span><span class="price-sub">45 min</span><span class="price-dots"></span><span class="price-val">$50</span></li>
+          <li class="price-row"><span class="price-name">Kids Haircut</span><span class="price-sub">25 min</span><span class="price-dots"></span><span class="price-val">$37</span></li>
+          <li class="price-row"><span class="price-name">Kids Zero / Skin Fade</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$40</span></li>
+          <li class="price-row"><span class="price-name">Seniors Haircut</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$37</span></li>
+        </ul>
+        <div class="cat-cta fade-up d3">
+          <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-ghost">Book a Haircut →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEARD & SHAVE -->
+    <div class="cat-block flip" style="background:var(--bg3);">
+      <div class="cat-img-wrap">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&h=560&auto=format&fit=crop&q=80" alt="Beard and shave" loading="lazy" />
+        <div class="cat-chip">Beard & Shave</div>
+      </div>
+      <div class="cat-text">
+        <div class="cat-watermark">SHAVE</div>
+        <h3 class="fade-up">Beard & Shave</h3>
+        <p class="cat-desc fade-up d1">From a clean line-up to a full hot shave experience. The old-school way.</p>
+        <ul class="price-list fade-up d2">
+          <li class="price-row"><span class="price-name">Beard Trim & Straight Razor</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$35</span></li>
+          <li class="price-row"><span class="price-name">Hot Shave</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$35</span></li>
+          <li class="price-row"><span class="price-name">Haircut & Beard Trim / Line Up</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$70</span></li>
+          <li class="price-row"><span class="price-name">Skin / Zero Fade & Beard</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
+          <li class="price-row"><span class="price-name">Haircut & Hot Shave</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
+        </ul>
+        <div class="cat-cta fade-up d3">
+          <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-ghost">Book Beard Service →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FACE & WAX -->
+    <div class="cat-block">
+      <div class="cat-img-wrap">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=700&h=560&auto=format&fit=crop&q=80" alt="Face and wax treatments" loading="lazy" />
+        <div class="cat-chip">Face & Wax</div>
+      </div>
+      <div class="cat-text">
+        <div class="cat-watermark">FACE</div>
+        <h3 class="fade-up">Face & Wax</h3>
+        <p class="cat-desc fade-up d1">Finishing touches that make the difference. Because the details matter.</p>
+        <ul class="price-list fade-up d2">
+          <li class="price-row"><span class="price-name">Facial Scrub</span><span class="price-dots"></span><span class="price-val">$25</span></li>
+          <li class="price-row"><span class="price-name">Charcoal Mask</span><span class="price-dots"></span><span class="price-val">$25</span></li>
+          <li class="price-row"><span class="price-name">Threading</span><span class="price-dots"></span><span class="price-val">$50</span></li>
+          <li class="price-row"><span class="price-name">Eyebrow Wax</span><span class="price-dots"></span><span class="price-val">$10</span></li>
+          <li class="price-row"><span class="price-name">Ear Wax</span><span class="price-dots"></span><span class="price-val">$5</span></li>
+          <li class="price-row"><span class="price-name">Nose Wax</span><span class="price-dots"></span><span class="price-val">$5</span></li>
+        </ul>
+        <div class="cat-cta fade-up d3">
+          <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-ghost">Book a Treatment →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY 2 — THE WORK -->
+  <section class="work sp-sm">
+    <div class="container work-head">
+      <span class="overline fade-up">The Work</span>
+    </div>
+    <div class="work-grid">
+      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=300&auto=format&fit=crop&q=75" alt="Client result" loading="lazy" />
+      <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=300&auto=format&fit=crop&q=75" alt="Hot shave" loading="lazy" />
+      <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=300&auto=format&fit=crop&q=75" alt="Haircut result" loading="lazy" />
+      <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=300&auto=format&fit=crop&q=75" alt="Beard result" loading="lazy" />
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="sp">
+    <div class="container">
+      <div class="reviews-head fade-up">
+        <div class="reviews-stars">★★★★★</div>
+        <h2 class="headline">Don't take our word for it.</h2>
+        <p>770 Calgarians have already made up their minds.</p>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card fade-up">
+          <div class="r-stars">★★★★★</div>
+          <p class="r-text">"One of those old-school barbershops that actually feels like a barbershop. Good banter, easy-going vibes. My go-to place in Calgary without question."</p>
+          <div class="r-meta"><em>✓</em> Google Review</div>
+        </div>
+        <div class="review-card fade-up d1">
+          <div class="r-stars">★★★★★</div>
+          <p class="r-text">"Best fade I've had in years. Consistent every single time — that's the hard part and they nail it. Showed up once without an appointment and they fit me right in."</p>
+          <div class="r-meta"><em>✓</em> Google Review</div>
+        </div>
+        <div class="review-card fade-up d2">
+          <div class="r-stars">★★★★★</div>
+          <p class="r-text">"Brought my son in for his first proper haircut. Patient, friendly, and the result was perfect. We'll be back every month without hesitation."</p>
+          <div class="r-meta"><em>✓</em> Google Review</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATION -->
+  <section class="location sp" id="location">
+    <div class="container location-grid">
+      <div>
+        <div class="loc-h fade-up">
+          <span class="overline">Find Us</span>
+          <h2 class="headline">We'll Handle<br /><em class="gold">the Rest.</em></h2>
+        </div>
+        <div class="loc-address fade-up d1">
+          <strong>Angelo's & Luigi's Barbershop</strong>
+          2705 Centre St NW<br />Calgary, Alberta
+        </div>
+        <table class="hours-table fade-up d2">
+          <tr><td>Monday – Friday</td><td>9:00 AM – 7:00 PM</td></tr>
+          <tr><td>Saturday</td><td>9:00 AM – 6:00 PM</td></tr>
+          <tr><td>Sunday</td><td>10:00 AM – 2:00 PM</td></tr>
+        </table>
+        <div class="loc-ctas fade-up d3">
+          <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary">Book Appointment</a>
+          <a href={MAPS_URL} target="_blank" rel="noopener" class="btn btn-ghost">Get Directions</a>
+        </div>
+      </div>
+      <div class="map-panel fade-up d1">
+        <div class="map-pin">📍</div>
+        <p>2705 Centre St NW<br />Calgary, Alberta</p>
+        <a href={MAPS_URL} target="_blank" rel="noopener" class="btn btn-ghost" style="margin-top:1.25rem;">Open in Google Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final sp">
+    <div class="container">
+      <div class="final-inner">
+        <h2 class="display fade-up" style="font-size:clamp(2.5rem,7vw,5rem); line-height:0.92;">
+          YOUR NEXT GREAT<br /><em class="gold" style="font-family:var(--serif); font-style:italic;">haircut</em><br />IS ONE CLICK AWAY
+        </h2>
+        <p class="fade-up d1">Book online. Show up. Leave looking sharp.</p>
+        <div class="steps fade-up d2">
+          <div class="step-item"><div class="step-num">1</div><div class="step-lbl">Book Online</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-lbl">Show Up</div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-lbl">Leave Sharp</div></div>
+        </div>
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary fade-up d3" style="font-size:0.85rem; padding:1.1rem 3rem;">
+          Book Your Appointment →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo">ANGELO'S <em>&</em> LUIGI'S BARBERSHOP</div>
+      <ul class="footer-links">
+        <li><a href="https://www.instagram.com/aandlbarbershop" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href={BOOKING_URL} target="_blank" rel="noopener">Book Now</a></li>
+      </ul>
+      <div class="footer-copy">© 2025 Angelo's & Luigi's Barbershop · Calgary, AB</div>
+    </div>
+  </footer>
+
+  <script>
+    // NAV shrink on scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Hero BG subtle zoom on load
+    const heroBg = document.getElementById('heroBg');
+    window.addEventListener('load', () => heroBg.classList.add('loaded'));
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
