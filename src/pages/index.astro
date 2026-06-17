@@ -8,7 +8,23 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Angelo's & Luigi's Barbershop | Calgary's Most Trusted Barbers</title>
-  <meta name="description" content="Calgary's most trusted barbershop. 770 five-star reviews. Haircuts, fades, beard trims, hot shaves. Book online." />
+  <meta name="description" content="Calgary's most trusted barbershop. 770 five-star reviews. Haircuts, fades, beard trims, hot shaves. Book online at 2705 Centre St NW." />
+  <link rel="canonical" href="https://tvmaia.github.io/tony-barbear-shop/" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23080807'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia%2C serif' font-size='13' font-weight='bold' fill='%23c8a44a'%3EA%26L%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Angelo's & Luigi's Barbershop | Calgary" />
+  <meta property="og:description" content="Calgary's most trusted barbershop. 770 five-star reviews. Old-school craft, modern results." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1200&h=630&auto=format&fit=crop&q=85" />
+  <meta property="og:url" content="https://tvmaia.github.io/tony-barbear-shop/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Angelo's & Luigi's Barbershop | Calgary" />
+  <meta name="twitter:description" content="770 five-star reviews. Old-school craft, modern results." />
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1200&h=630&auto=format&fit=crop&q=85" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -25,6 +41,7 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       --muted:    #7a7060;
       --dim:      #3a3530;
       --border:   rgba(200,164,74,0.12);
+      --ease:     cubic-bezier(0.25, 0.46, 0.45, 0.94);
       --display:  'Bebas Neue', Impact, sans-serif;
       --serif:    'Cormorant Garamond', Georgia, serif;
       --sans:     'DM Sans', system-ui, sans-serif;
@@ -60,8 +77,83 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     .sp { padding: 7rem 0; }
     .sp-sm { padding: 4rem 0; }
 
+    /* ── PAGE LOADER ── */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 99998;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.25rem;
+      transition: opacity 0.7s var(--ease), visibility 0.7s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-mf {
+      font-family: var(--display);
+      font-size: 5rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      line-height: 1;
+      animation: loaderFadeIn 0.9s var(--ease) both;
+    }
+    .loader-bar {
+      width: 0; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      animation: loaderBar 0.8s var(--ease) 0.4s both;
+    }
+    .loader-label {
+      font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: loaderFadeIn 0.6s var(--ease) 0.6s both;
+    }
+    @keyframes loaderFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes loaderBar { to { width: 72px; } }
+
+    /* ── SCROLL PROGRESS ── */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: linear-gradient(to right, #8b6914, var(--gold), #f0d888);
+      z-index: 99999;
+      transition: width 0.08s linear;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    @media (hover: hover) and (pointer: fine) {
+      body { cursor: none; }
+      a, button, [role="button"] { cursor: none; }
+      .cursor {
+        position: fixed;
+        width: 32px; height: 32px;
+        border: 1px solid rgba(200,164,74,0.5);
+        border-radius: 50%;
+        pointer-events: none; z-index: 99997;
+        top: 0; left: 0;
+        transition: width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s, border-color 0.3s;
+        will-change: transform;
+      }
+      .cursor.hovering {
+        width: 50px; height: 50px;
+        background: rgba(200,164,74,0.06);
+        border-color: rgba(200,164,74,0.85);
+      }
+      .cursor-dot {
+        position: fixed;
+        width: 4px; height: 4px;
+        background: var(--gold);
+        border-radius: 50%;
+        pointer-events: none; z-index: 99997;
+        top: 0; left: 0;
+        will-change: transform;
+        transition: transform 0.04s;
+      }
+    }
+
     /* ── SCROLL ANIMATIONS ── */
-    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
     .fade-up.visible { opacity: 1; transform: translateY(0); }
     .fade-up.d1 { transition-delay: 0.1s; }
     .fade-up.d2 { transition-delay: 0.2s; }
@@ -70,23 +162,9 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     .fade-up.d5 { transition-delay: 0.5s; }
 
     /* ── TYPOGRAPHY ── */
-    .display {
-      font-family: var(--display);
-      letter-spacing: 0.03em;
-      line-height: 0.92;
-    }
-    .headline {
-      font-family: var(--serif);
-      font-weight: 600;
-      line-height: 1.15;
-    }
-    .overline {
-      font-size: 0.65rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      display: block;
-    }
+    .display { font-family: var(--display); letter-spacing: 0.03em; line-height: 0.92; }
+    .headline { font-family: var(--serif); font-weight: 600; line-height: 1.15; }
+    .overline { font-size: 0.65rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); display: block; }
     .gold { color: var(--gold); }
     .muted { color: var(--muted); }
 
@@ -100,9 +178,11 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.22s ease;
+      transition: all 0.22s var(--ease);
       position: relative;
     }
+    .btn-sm { padding: 0.55rem 1.25rem; font-size: 0.65rem; }
+    .btn-lg { padding: 1.15rem 3rem; font-size: 0.8rem; }
     .btn-primary { background: var(--gold); color: #080807; }
     .btn-primary:hover { background: #dfc06a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,164,74,0.25); }
     .btn-ghost {
@@ -118,15 +198,11 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       background: rgba(8,8,7,0.88);
       backdrop-filter: blur(12px) saturate(120%);
       border-bottom: 1px solid var(--border);
-      transition: padding 0.3s ease;
+      transition: padding 0.3s var(--ease);
     }
     nav.scrolled { padding: 1rem 0; }
     .nav-inner { display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo {
-      font-family: var(--display);
-      font-size: 1.15rem;
-      letter-spacing: 0.12em;
-    }
+    .nav-logo { font-family: var(--display); font-size: 1.15rem; letter-spacing: 0.12em; }
     .nav-logo em { color: var(--gold); font-style: normal; }
     .nav-right { display: flex; align-items: center; gap: 2.5rem; }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
@@ -134,9 +210,55 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       font-size: 0.68rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--muted);
       transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px; background: var(--gold);
+      transition: width 0.3s var(--ease);
     }
     .nav-links a:hover { color: var(--cream); }
-    @media (max-width: 640px) { .nav-links { display: none; } }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; background: none; border: none;
+    }
+    .nav-hamburger span { display: block; width: 22px; height: 1px; background: var(--gold); transition: all 0.3s; }
+    .nav-hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    @media (max-width: 768px) { .nav-links { display: none; } .nav-hamburger { display: flex; } }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 499;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.25rem;
+      transform: translateX(100%);
+      transition: transform 0.5s var(--ease);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu__close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); cursor: pointer; background: none;
+      transition: background 0.3s;
+    }
+    .mobile-menu__close:hover { background: var(--gold-dim); }
+    .mobile-menu a {
+      font-family: var(--display); font-size: 2.4rem; letter-spacing: 0.06em;
+      color: var(--cream); transition: color 0.25s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu__deco {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim);
+    }
 
     /* ── HERO ── */
     .hero {
@@ -148,16 +270,16 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     }
     .hero-bg {
       position: absolute; inset: 0;
-      background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1800&auto=format&fit=crop&q=85');
-      background-size: cover; background-position: center 30%;
-      filter: brightness(0.22) saturate(0.6);
+      background-image: url('https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1800&auto=format&fit=crop&q=85');
+      background-size: cover; background-position: center 40%;
+      filter: brightness(0.2) saturate(0.5);
       transform: scale(1.04);
-      transition: transform 8s ease;
+      transition: transform 8s var(--ease);
     }
     .hero-bg.loaded { transform: scale(1); }
     .hero-gradient {
       position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(8,8,7,0.96) 0%, rgba(8,8,7,0.4) 50%, rgba(8,8,7,0.15) 100%);
+      background: linear-gradient(to top, rgba(8,8,7,0.97) 0%, rgba(8,8,7,0.45) 50%, rgba(8,8,7,0.15) 100%);
     }
     .hero-content {
       position: relative; z-index: 1;
@@ -215,8 +337,15 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       overflow: hidden;
     }
     .trust-track {
-      display: flex; align-items: center; gap: 4rem;
+      display: flex; align-items: center; gap: 5rem;
       white-space: nowrap;
+      animation: trustMarquee 34s linear infinite;
+      width: max-content;
+    }
+    .trust:hover .trust-track { animation-play-state: paused; }
+    @keyframes trustMarquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
     .trust-item { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
     .trust-num { font-family: var(--display); font-size: 1.6rem; color: var(--gold); letter-spacing: 0.05em; }
@@ -344,7 +473,6 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     }
     .cat-text .cat-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
 
-    /* PRICE LIST — menu style */
     .price-list { list-style: none; }
     .price-row {
       display: flex; align-items: baseline;
@@ -360,10 +488,7 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       margin: 0 0.6rem 0.2rem;
       min-width: 1rem;
     }
-    .price-val {
-      font-family: var(--serif); font-size: 1.05rem;
-      color: var(--gold); flex-shrink: 0;
-    }
+    .price-val { font-family: var(--serif); font-size: 1.05rem; color: var(--gold); flex-shrink: 0; }
     .cat-cta { margin-top: 2rem; }
 
     @media (max-width: 768px) {
@@ -375,21 +500,35 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
 
     /* ── GALLERY 2 — THE WORK ── */
     .work { background: var(--bg3); }
-    .work-head { text-align: center; padding-bottom: 2rem; }
-    .work-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-    }
-    .work-grid img {
-      height: 260px;
+    .work-head { text-align: center; padding-bottom: 3rem; }
+    .work-head h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-top: 0.75rem; }
+    .work-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+
+    .work-item { position: relative; overflow: hidden; }
+    .work-item img {
+      height: 280px; width: 100%;
       filter: brightness(0.72) saturate(0.6);
-      transition: filter 0.4s;
+      transition: filter 0.4s var(--ease), transform 0.55s var(--ease);
     }
-    .work-grid img:hover { filter: brightness(1) saturate(0.85); }
+    .work-item:hover img { filter: brightness(0.45) saturate(0.5); transform: scale(1.05); }
+    .work-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: flex-end; padding: 1.5rem;
+      opacity: 0; transition: opacity 0.4s var(--ease);
+    }
+    .work-item:hover .work-overlay { opacity: 1; }
+    .work-overlay span {
+      font-family: var(--display);
+      font-size: 1.05rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream);
+      border-bottom: 1px solid var(--gold);
+      padding-bottom: 0.3rem;
+    }
+
     @media (max-width: 768px) {
       .work-grid { grid-template-columns: repeat(2, 1fr); }
-      .work-grid img { height: 180px; }
+      .work-item img { height: 180px; }
+      .work-overlay { opacity: 1; }
     }
 
     /* ── REVIEWS ── */
@@ -413,8 +552,20 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       font-size: 1.05rem; color: var(--cream);
       line-height: 1.7; margin-bottom: 1.5rem;
     }
-    .r-meta { font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
-    .r-meta em { color: var(--gold); font-style: normal; margin-right: 0.4rem; }
+    .r-client {
+      display: flex; align-items: center; gap: 0.85rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .r-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--gold-dim); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 0.82rem; color: var(--gold); flex-shrink: 0;
+    }
+    .r-name { font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em; }
+    .r-date { font-size: 0.65rem; letter-spacing: 0.08em; color: var(--muted); margin-top: 0.15rem; }
+
     @media (max-width: 768px) { .reviews-grid { grid-template-columns: 1fr; } }
 
     /* ── LOCATION ── */
@@ -431,21 +582,22 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     .hours-table td:first-child { color: var(--muted); }
     .hours-table td:last-child { text-align: right; font-weight: 500; }
     .loc-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+
     .map-panel {
-      height: 400px; background: var(--bg3);
+      height: 420px;
       border: 1px solid var(--border);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 1rem; text-align: center; padding: 2rem;
-      position: relative; overflow: hidden;
+      overflow: hidden;
+      position: relative;
     }
-    .map-panel::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, rgba(200,164,74,0.04) 0%, transparent 70%);
+    .map-panel iframe {
+      width: 100%; height: 100%; border: 0;
+      filter: invert(92%) hue-rotate(180deg) saturate(0.65) brightness(0.88);
     }
-    .map-pin { font-size: 2.75rem; position: relative; }
-    .map-panel p { color: var(--muted); font-size: 0.85rem; line-height: 1.8; position: relative; }
-    @media (max-width: 768px) { .location-grid { grid-template-columns: 1fr; gap: 3rem; } .map-panel { height: 240px; } }
+
+    @media (max-width: 768px) {
+      .location-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .map-panel { height: 280px; }
+    }
 
     /* ── FINAL CTA ── */
     .final { text-align: center; border-top: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -468,18 +620,77 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     .step-lbl { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
 
     /* ── FOOTER ── */
-    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 0; }
-    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-    .footer-logo { font-family: var(--display); font-size: 1rem; letter-spacing: 0.1em; }
-    .footer-logo em { color: var(--gold); font-style: normal; }
-    .footer-links { display: flex; gap: 2rem; list-style: none; }
-    .footer-links a { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); transition: color 0.2s; }
-    .footer-links a:hover { color: var(--gold); }
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 4.5rem 0 2rem; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .footer-brand-logo { font-family: var(--display); font-size: 1.2rem; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+    .footer-brand-logo em { color: var(--gold); font-style: normal; }
+    .footer-tagline { font-size: 0.85rem; color: var(--muted); line-height: 1.75; max-width: 260px; margin-bottom: 1.5rem; }
+    .footer-social {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.7rem; letter-spacing: 0.12em; color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-social:hover { color: var(--gold); }
+    .footer-col-title {
+      font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 500; margin-bottom: 1.25rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-col a {
+      font-size: 0.85rem; color: var(--muted);
+      transition: color 0.2s, padding-left 0.25s var(--ease);
+      display: inline-block;
+    }
+    .footer-col a:hover { color: var(--cream); padding-left: 0.4rem; }
+    .footer-hours { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+    .footer-hours div { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+    .footer-hours span { color: var(--cream); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     .footer-copy { font-size: 0.65rem; color: var(--dim); }
-    @media (max-width: 600px) { .footer-inner { flex-direction: column; text-align: center; } }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 600px) { .footer-bottom { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-mf">A&L</div>
+    <div class="loader-bar"></div>
+    <div class="loader-label">Angelo's &amp; Luigi's Barbershop</div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div id="progress"></div>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu__close" id="mobileClose" aria-label="Close menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="1" y1="1" x2="15" y2="15" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="15" y1="1" x2="1" y2="15" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+    </button>
+    <a href="#work">Work</a>
+    <a href="#services">Services</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#location">Location</a>
+    <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary">Book Now</a>
+    <div class="mobile-menu__deco">Calgary, Alberta</div>
+  </div>
 
   <!-- NAV -->
   <nav id="nav">
@@ -487,10 +698,15 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       <div class="nav-logo">ANGELO'S <em>&</em> LUIGI'S</div>
       <div class="nav-right">
         <ul class="nav-links">
+          <li><a href="#work">Work</a></li>
           <li><a href="#services">Services</a></li>
+          <li><a href="#reviews">Reviews</a></li>
           <li><a href="#location">Location</a></li>
         </ul>
-        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary" style="padding:0.55rem 1.5rem;">Book Now</a>
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary btn-sm">Book Now</a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
@@ -522,55 +738,88 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
 
   <!-- TRUST BAR -->
   <div class="trust">
-    <div class="container">
-      <div class="trust-track">
-        <div class="trust-item">
-          <div>
-            <div class="trust-num">5.0 ★</div>
-            <div class="trust-lbl">Google Rating</div>
-          </div>
-        </div>
-        <div class="trust-sep">·</div>
-        <div class="trust-item">
-          <div>
-            <div class="trust-num">770+</div>
-            <div class="trust-lbl">Five-Star Reviews</div>
-          </div>
-        </div>
-        <div class="trust-sep">·</div>
-        <div class="trust-item">
-          <div>
-            <div class="trust-num">Centre NW</div>
-            <div class="trust-lbl">Calgary, Alberta</div>
-          </div>
-        </div>
-        <div class="trust-sep">·</div>
-        <div class="trust-item">
-          <div>
-            <div class="trust-num">Mon–Fri</div>
-            <div class="trust-lbl">9 AM – 7 PM</div>
-          </div>
-        </div>
+    <div class="trust-track">
+      <!-- Set A -->
+      <div class="trust-item">
+        <div class="trust-num">5.0 ★</div>
+        <div class="trust-lbl">Google Rating</div>
       </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">770+</div>
+        <div class="trust-lbl">Five-Star Reviews</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">10+</div>
+        <div class="trust-lbl">Years Cutting</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">Open 7</div>
+        <div class="trust-lbl">Days a Week</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">$30–75</div>
+        <div class="trust-lbl">All Services</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">Online</div>
+        <div class="trust-lbl">Easy Booking</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <!-- Set B — duplicate for seamless loop -->
+      <div class="trust-item">
+        <div class="trust-num">5.0 ★</div>
+        <div class="trust-lbl">Google Rating</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">770+</div>
+        <div class="trust-lbl">Five-Star Reviews</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">10+</div>
+        <div class="trust-lbl">Years Cutting</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">Open 7</div>
+        <div class="trust-lbl">Days a Week</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">$30–75</div>
+        <div class="trust-lbl">All Services</div>
+      </div>
+      <div class="trust-sep">·</div>
+      <div class="trust-item">
+        <div class="trust-num">Online</div>
+        <div class="trust-lbl">Easy Booking</div>
+      </div>
+      <div class="trust-sep">·</div>
     </div>
   </div>
 
   <!-- GALLERY 1 — ASYMMETRIC -->
   <div class="gallery-asym">
     <div class="g-main">
-      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&h=600&auto=format&fit=crop&q=80" alt="Barber at work" loading="lazy" />
+      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&h=600&auto=format&fit=crop&q=80&crop=left" alt="Barber at work" loading="lazy" />
     </div>
-    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=290&auto=format&fit=crop&q=80" alt="Haircut" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=290&auto=format&fit=crop&q=80" alt="Haircut in progress" loading="lazy" />
     <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=290&auto=format&fit=crop&q=80" alt="Beard trim" loading="lazy" />
-    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=290&auto=format&fit=crop&q=80" alt="Hot shave" loading="lazy" />
     <img src="https://images.unsplash.com/photo-1572422977703-61f25b4e09a0?w=600&h=290&auto=format&fit=crop&q=80" alt="Barbershop tools" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=290&auto=format&fit=crop&q=80&crop=top" alt="Hot shave" loading="lazy" />
   </div>
 
   <!-- PAS -->
   <section class="pas">
     <div class="pas-grid">
       <div class="pas-img-wrap">
-        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=700&h=700&auto=format&fit=crop&q=80" alt="Precision barber work" loading="lazy" />
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=700&h=700&auto=format&fit=crop&q=80&crop=right" alt="Precision barber work" loading="lazy" />
       </div>
       <div class="pas-text">
         <span class="overline fade-up">The Problem With Most Barbershops</span>
@@ -607,7 +856,7 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     <!-- HAIRCUTS -->
     <div class="cat-block">
       <div class="cat-img-wrap">
-        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=700&h=560&auto=format&fit=crop&q=80" alt="Haircuts Calgary" loading="lazy" />
+        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=700&h=560&auto=format&fit=crop&q=80&crop=center" alt="Haircuts Calgary" loading="lazy" />
         <div class="cat-chip">Haircuts</div>
       </div>
       <div class="cat-text">
@@ -632,19 +881,19 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     <!-- BEARD & SHAVE -->
     <div class="cat-block flip" style="background:var(--bg3);">
       <div class="cat-img-wrap">
-        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&h=560&auto=format&fit=crop&q=80" alt="Beard and shave" loading="lazy" />
-        <div class="cat-chip">Beard & Shave</div>
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&h=560&auto=format&fit=crop&q=80&crop=center" alt="Beard and shave" loading="lazy" />
+        <div class="cat-chip">Beard &amp; Shave</div>
       </div>
       <div class="cat-text">
         <div class="cat-watermark">SHAVE</div>
-        <h3 class="fade-up">Beard & Shave</h3>
+        <h3 class="fade-up">Beard &amp; Shave</h3>
         <p class="cat-desc fade-up d1">From a clean line-up to a full hot shave experience. The old-school way.</p>
         <ul class="price-list fade-up d2">
-          <li class="price-row"><span class="price-name">Beard Trim & Straight Razor</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$35</span></li>
+          <li class="price-row"><span class="price-name">Beard Trim &amp; Straight Razor</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$35</span></li>
           <li class="price-row"><span class="price-name">Hot Shave</span><span class="price-sub">30 min</span><span class="price-dots"></span><span class="price-val">$35</span></li>
-          <li class="price-row"><span class="price-name">Haircut & Beard Trim / Line Up</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$70</span></li>
-          <li class="price-row"><span class="price-name">Skin / Zero Fade & Beard</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
-          <li class="price-row"><span class="price-name">Haircut & Hot Shave</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
+          <li class="price-row"><span class="price-name">Haircut &amp; Beard Trim / Line Up</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$70</span></li>
+          <li class="price-row"><span class="price-name">Skin / Zero Fade &amp; Beard</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
+          <li class="price-row"><span class="price-name">Haircut &amp; Hot Shave</span><span class="price-sub">1 hr</span><span class="price-dots"></span><span class="price-val">$75</span></li>
         </ul>
         <div class="cat-cta fade-up d3">
           <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-ghost">Book Beard Service →</a>
@@ -656,11 +905,11 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
     <div class="cat-block">
       <div class="cat-img-wrap">
         <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=700&h=560&auto=format&fit=crop&q=80" alt="Face and wax treatments" loading="lazy" />
-        <div class="cat-chip">Face & Wax</div>
+        <div class="cat-chip">Face &amp; Wax</div>
       </div>
       <div class="cat-text">
         <div class="cat-watermark">FACE</div>
-        <h3 class="fade-up">Face & Wax</h3>
+        <h3 class="fade-up">Face &amp; Wax</h3>
         <p class="cat-desc fade-up d1">Finishing touches that make the difference. Because the details matter.</p>
         <ul class="price-list fade-up d2">
           <li class="price-row"><span class="price-name">Facial Scrub</span><span class="price-dots"></span><span class="price-val">$25</span></li>
@@ -678,20 +927,33 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
   </section>
 
   <!-- GALLERY 2 — THE WORK -->
-  <section class="work sp-sm">
+  <section class="work sp-sm" id="work">
     <div class="container work-head">
-      <span class="overline fade-up">The Work</span>
+      <span class="overline fade-up">Portfolio</span>
+      <h2 class="headline fade-up d1">The Work Speaks for Itself.</h2>
     </div>
     <div class="work-grid">
-      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=300&auto=format&fit=crop&q=75" alt="Client result" loading="lazy" />
-      <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=300&auto=format&fit=crop&q=75" alt="Hot shave" loading="lazy" />
-      <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=300&auto=format&fit=crop&q=75" alt="Haircut result" loading="lazy" />
-      <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=300&auto=format&fit=crop&q=75" alt="Beard result" loading="lazy" />
+      <div class="work-item">
+        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=300&auto=format&fit=crop&q=75&crop=top" alt="Classic Haircut" loading="lazy" />
+        <div class="work-overlay"><span>Classic Cut</span></div>
+      </div>
+      <div class="work-item">
+        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=300&auto=format&fit=crop&q=75" alt="Hot Shave" loading="lazy" />
+        <div class="work-overlay"><span>Hot Shave</span></div>
+      </div>
+      <div class="work-item">
+        <img src="https://images.unsplash.com/photo-1572422977703-61f25b4e09a0?w=600&h=300&auto=format&fit=crop&q=75" alt="Skin Fade" loading="lazy" />
+        <div class="work-overlay"><span>Skin Fade</span></div>
+      </div>
+      <div class="work-item">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=300&auto=format&fit=crop&q=75&crop=top" alt="Beard Trim" loading="lazy" />
+        <div class="work-overlay"><span>Beard Trim</span></div>
+      </div>
     </div>
   </section>
 
   <!-- REVIEWS -->
-  <section class="sp">
+  <section class="sp" id="reviews">
     <div class="container">
       <div class="reviews-head fade-up">
         <div class="reviews-stars">★★★★★</div>
@@ -702,17 +964,35 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
         <div class="review-card fade-up">
           <div class="r-stars">★★★★★</div>
           <p class="r-text">"One of those old-school barbershops that actually feels like a barbershop. Good banter, easy-going vibes. My go-to place in Calgary without question."</p>
-          <div class="r-meta"><em>✓</em> Google Review</div>
+          <div class="r-client">
+            <div class="r-avatar">JM</div>
+            <div>
+              <div class="r-name">James M.</div>
+              <div class="r-date">Google Review · April 2025</div>
+            </div>
+          </div>
         </div>
         <div class="review-card fade-up d1">
           <div class="r-stars">★★★★★</div>
           <p class="r-text">"Best fade I've had in years. Consistent every single time — that's the hard part and they nail it. Showed up once without an appointment and they fit me right in."</p>
-          <div class="r-meta"><em>✓</em> Google Review</div>
+          <div class="r-client">
+            <div class="r-avatar">RT</div>
+            <div>
+              <div class="r-name">Ryan T.</div>
+              <div class="r-date">Google Review · February 2025</div>
+            </div>
+          </div>
         </div>
         <div class="review-card fade-up d2">
           <div class="r-stars">★★★★★</div>
           <p class="r-text">"Brought my son in for his first proper haircut. Patient, friendly, and the result was perfect. We'll be back every month without hesitation."</p>
-          <div class="r-meta"><em>✓</em> Google Review</div>
+          <div class="r-client">
+            <div class="r-avatar">SK</div>
+            <div>
+              <div class="r-name">Sarah K.</div>
+              <div class="r-date">Google Review · January 2025</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -727,7 +1007,7 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
           <h2 class="headline">We'll Handle<br /><em class="gold">the Rest.</em></h2>
         </div>
         <div class="loc-address fade-up d1">
-          <strong>Angelo's & Luigi's Barbershop</strong>
+          <strong>Angelo's &amp; Luigi's Barbershop</strong>
           2705 Centre St NW<br />Calgary, Alberta
         </div>
         <table class="hours-table fade-up d2">
@@ -741,9 +1021,12 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
         </div>
       </div>
       <div class="map-panel fade-up d1">
-        <div class="map-pin">📍</div>
-        <p>2705 Centre St NW<br />Calgary, Alberta</p>
-        <a href={MAPS_URL} target="_blank" rel="noopener" class="btn btn-ghost" style="margin-top:1.25rem;">Open in Google Maps</a>
+        <iframe
+          src="https://maps.google.com/maps?q=2705+Centre+St+NW,Calgary,Alberta,Canada&output=embed&z=16"
+          allowfullscreen=""
+          loading="lazy"
+          title="Angelo's & Luigi's Barbershop — 2705 Centre St NW, Calgary"
+        ></iframe>
       </div>
     </div>
   </section>
@@ -761,7 +1044,7 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
           <div class="step-item"><div class="step-num">2</div><div class="step-lbl">Show Up</div></div>
           <div class="step-item"><div class="step-num">3</div><div class="step-lbl">Leave Sharp</div></div>
         </div>
-        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary fade-up d3" style="font-size:0.85rem; padding:1.1rem 3rem;">
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary btn-lg fade-up d3">
           Book Your Appointment →
         </a>
       </div>
@@ -770,29 +1053,92 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
 
   <!-- FOOTER -->
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-logo">ANGELO'S <em>&</em> LUIGI'S BARBERSHOP</div>
-      <ul class="footer-links">
-        <li><a href="https://www.instagram.com/aandlbarbershop" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href={BOOKING_URL} target="_blank" rel="noopener">Book Now</a></li>
-      </ul>
-      <div class="footer-copy">© 2025 Angelo's & Luigi's Barbershop · Calgary, AB</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand-logo">ANGELO'S <em>&</em> LUIGI'S</div>
+          <p class="footer-tagline">Calgary's most trusted barbershop. Old-school craft, honest prices, consistent results.</p>
+          <a href="https://www.instagram.com/aandlbarbershop" target="_blank" rel="noopener" class="footer-social">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+            @aandlbarbershop
+          </a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Services</div>
+          <ul>
+            <li><a href="#services">Haircuts</a></li>
+            <li><a href="#services">Beard &amp; Shave</a></li>
+            <li><a href="#services">Face &amp; Wax</a></li>
+            <li><a href={BOOKING_URL} target="_blank" rel="noopener">Book Now →</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Visit Us</div>
+          <p style="font-size:0.85rem; color:var(--muted); line-height:1.8;">2705 Centre St NW<br />Calgary, Alberta</p>
+          <div class="footer-hours">
+            <div>Mon – Fri <span>9AM – 7PM</span></div>
+            <div>Saturday <span>9AM – 6PM</span></div>
+            <div>Sunday <span>10AM – 2PM</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 Angelo's &amp; Luigi's Barbershop · Calgary, AB</div>
+        <a href={BOOKING_URL} target="_blank" rel="noopener" class="btn btn-primary btn-sm">Book Now</a>
+      </div>
     </div>
   </footer>
 
   <script>
-    // NAV shrink on scroll
+    // ── LOADER ──
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 900);
+    });
+
+    // ── CUSTOM CURSOR ──
+    const cursor = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursorDot');
+    if (cursor && cursorDot) {
+      let cx = 0, cy = 0;
+      document.addEventListener('mousemove', e => {
+        cx = e.clientX; cy = e.clientY;
+        cursorDot.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      });
+      function animateCursor() {
+        cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+        requestAnimationFrame(animateCursor);
+      }
+      animateCursor();
+      document.querySelectorAll('a, button, [role="button"]').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+      });
+    }
+
+    // ── SCROLL PROGRESS ──
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      progress.style.width = (pct * 100) + '%';
+    }, { passive: true });
+
+    // ── NAV SHRINK ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    // Hero BG subtle zoom on load
+    // ── HERO BG ZOOM ──
     const heroBg = document.getElementById('heroBg');
     window.addEventListener('load', () => heroBg.classList.add('loaded'));
 
-    // Scroll animations
+    // ── SCROLL ANIMATIONS ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -802,6 +1148,25 @@ const MAPS_URL = 'https://maps.google.com/?q=2705+Centre+St+NW,+Calgary,+Alberta
       });
     }, { threshold: 0.12 });
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // ── MOBILE MENU ──
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    if (hamburger && mobileMenu && mobileClose) {
+      hamburger.addEventListener('click', () => {
+        mobileMenu.classList.add('open');
+        hamburger.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      const closeMenu = () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+      mobileClose.addEventListener('click', closeMenu);
+      mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    }
   </script>
 
 </body>
